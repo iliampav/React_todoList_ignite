@@ -10,19 +10,89 @@ interface Task {
   isComplete: boolean;
 }
 
+let idNumberCount = 1
+
 export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
   function handleCreateNewTask() {
-    // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    let newTask = {
+      id: idNumberCount,
+      title: newTaskTitle,
+      isComplete: false,
+    } 
+
+    idNumberCount += 1
+
+    const taskArray = [...tasks, newTask]
+
+    newTaskTitle == '' ? '' : setTasks(taskArray)
+    
   }
 
   function handleToggleTaskCompletion(id: number) {
-    // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+
+    const completeTask = tasks.findIndex(element => element.id === id)
+    let taskToUpdate = tasks[completeTask] 
+
+    function taskChanged(value: Task) {
+      return value.id !== id;
+    }
+    
+    var taskFiltered = tasks.filter(taskChanged);
+
+    if (taskToUpdate.isComplete == true) {
+
+      const taskUpdated = {
+        id: taskToUpdate.id,
+        title: taskToUpdate.title,
+        isComplete: false
+      }
+
+      const newTaskUpdated = [ ...taskFiltered, taskUpdated]
+
+      newTaskUpdated.sort(function (taskA, taskB) {
+        if (taskA.id > taskB.id) {
+          return 1;
+        }
+        if (taskA.id < taskB.id) {
+          return -1;
+        }
+        return 0;
+      });
+
+      setTasks(newTaskUpdated)
+
+    } else {
+
+        const taskUpdated = {
+          id: taskToUpdate.id,
+          title: taskToUpdate.title,
+          isComplete: true
+      }
+
+      const newTaskUpdated = [ ...taskFiltered, taskUpdated]
+
+      newTaskUpdated.sort(function (taskA, taskB) {
+        if (taskA.id > taskB.id) {
+          return 1;
+        }
+        if (taskA.id < taskB.id) {
+          return -1;
+        }
+        return 0;
+      });
+
+      setTasks(newTaskUpdated)
+    }
+    
   }
 
   function handleRemoveTask(id: number) {
+    const taskToBeRemoved = tasks.filter(element => element.id !== id)
+
+    setTasks(taskToBeRemoved)
     // Remova uma task da listagem pelo ID
   }
 
